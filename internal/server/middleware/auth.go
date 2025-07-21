@@ -2,10 +2,10 @@ package middleware
 
 import (
 	"context"
+	"dnd-game/internal/util/helper"
+	"dnd-game/internal/util/services"
 	"net/http"
 	"strings"
-	"template-api/internal/util/helper"
-	"template-api/internal/util/services"
 	"time"
 )
 

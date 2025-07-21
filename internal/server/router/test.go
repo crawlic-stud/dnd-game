@@ -2,6 +2,10 @@ package router
 
 import (
 	"context"
+	"dnd-game/internal/db"
+	"dnd-game/internal/server"
+	"dnd-game/internal/util/helper"
+	"dnd-game/internal/util/services"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -11,10 +15,6 @@ import (
 	"net/http/httptest"
 	"os"
 	"strings"
-	"template-api/internal/db"
-	"template-api/internal/server"
-	"template-api/internal/util/helper"
-	"template-api/internal/util/services"
 	"testing"
 	"time"
 

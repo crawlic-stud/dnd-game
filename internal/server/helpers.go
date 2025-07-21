@@ -1,12 +1,12 @@
 package server
 
 import (
+	"dnd-game/internal/util/validation"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
-	"template-api/internal/util/validation"
 )
 
 // GetBody scans into struct and validates JSON body

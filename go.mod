@@ -1,4 +1,4 @@
-module template-api
+module dnd-game
 
 go 1.23.4
 

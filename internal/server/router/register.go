@@ -1,10 +1,10 @@
 package router
 
 import (
+	"dnd-game/internal/db"
+	"dnd-game/internal/models"
 	"fmt"
 	"net/http"
-	"template-api/internal/db"
-	"template-api/internal/models"
 )
 
 func (api *Router) Register(w http.ResponseWriter, r *http.Request) {

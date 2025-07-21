@@ -2,7 +2,7 @@ package router
 
 import (
 	"context"
-	"template-api/internal/db"
+	"dnd-game/internal/db"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

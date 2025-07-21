@@ -1,6 +1,6 @@
 package models
 
-import "template-api/internal/util/validation"
+import "dnd-game/internal/util/validation"
 
 type LoginUser struct {
 	Username string `json:"username"`

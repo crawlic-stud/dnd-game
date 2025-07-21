@@ -1,9 +1,9 @@
 package router
 
 import (
+	"dnd-game/internal/models"
 	"fmt"
 	"net/http"
-	"template-api/internal/models"
 )
 
 func (api *Router) Login(w http.ResponseWriter, r *http.Request) {

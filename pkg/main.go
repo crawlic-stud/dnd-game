@@ -7,12 +7,12 @@ import (
 	"net/http"
 	"os"
 
-	"template-api/internal/db"
-	"template-api/internal/server"
-	"template-api/internal/server/middleware"
-	"template-api/internal/server/router"
-	"template-api/internal/util/helper"
-	"template-api/internal/util/services"
+	"dnd-game/internal/db"
+	"dnd-game/internal/server"
+	"dnd-game/internal/server/middleware"
+	"dnd-game/internal/server/router"
+	"dnd-game/internal/util/helper"
+	"dnd-game/internal/util/services"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

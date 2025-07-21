@@ -1,14 +1,14 @@
 package server
 
 import (
+	"dnd-game/internal/db"
+	"dnd-game/internal/util/helper"
+	"dnd-game/internal/util/services"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
-	"template-api/internal/db"
-	"template-api/internal/util/helper"
-	"template-api/internal/util/services"
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"

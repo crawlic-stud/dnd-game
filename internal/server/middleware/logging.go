@@ -1,8 +1,8 @@
 package middleware
 
 import (
+	"dnd-game/internal/util/helper"
 	"net/http"
-	"template-api/internal/util/helper"
 	"time"
 )
 

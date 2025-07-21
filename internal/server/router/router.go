@@ -1,10 +1,10 @@
 package router
 
 import (
+	"dnd-game/internal/server"
 	"log"
 	"net/http"
 	"strings"
-	"template-api/internal/server"
 
 	"github.com/gorilla/websocket"
 )
