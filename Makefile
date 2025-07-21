@@ -1,4 +1,5 @@
-
+run:
+	go run pkg/main.go
 
 route:
 	bash scripts/route.sh ${name}

@@ -6,7 +6,20 @@ package db
 
 import (
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
+
+type Character struct {
+	ID        uuid.UUID        `json:"id"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+	Name      string           `json:"name"`
+	Class     string           `json:"class"`
+	Level     int16            `json:"level"`
+	Avatar    *string          `json:"avatar"`
+	UserID    uuid.UUID        `json:"user_id"`
+	Metadata  []byte           `json:"metadata"`
+}
 
 type User struct {
 	ID             uuid.UUID `json:"id"`

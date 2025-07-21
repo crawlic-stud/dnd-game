@@ -46,6 +46,12 @@ func setupPool() *pgxpool.Pool {
 func registerAPIRoutes(router *router.Router) {
 	router.Route("POST /login", router.Login)
 	router.Route("POST /register", router.Register)
+
+	router.Route("POST /characters", router.CreateCharacter)
+	router.Route("GET /characters", router.ListCharacters)
+	router.Route("GET /characters/{character_id}", router.GetCharacterById)
+	router.Route("DELETE /characters/{character_id}", router.DeleteCharacter)
+	router.Route("PUT /characters/{character_id}", router.UpdateCharacter)
 }
 
 func setup() (*http.Server, func()) {

@@ -27,6 +27,17 @@ func (v validator) Add(check bool, desc string) validator {
 	return v
 }
 
+func (v validator) CheckError(err error) validator {
+	if err != nil {
+		v.checks = append(v.checks, false)
+		v.descriptions = append(v.descriptions, err.Error())
+	} else {
+		v.checks = append(v.checks, true)
+		v.descriptions = append(v.descriptions, "")
+	}
+	return v
+}
+
 func (v validator) Validate() error {
 	for ix, check := range v.checks {
 		desc := v.descriptions[ix]

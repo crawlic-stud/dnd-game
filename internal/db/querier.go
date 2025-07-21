@@ -11,9 +11,14 @@ import (
 )
 
 type Querier interface {
+	CreateCharacter(ctx context.Context, arg CreateCharacterParams) (Character, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) error
+	DeleteCharacter(ctx context.Context, id uuid.UUID) error
+	GetCharacterByID(ctx context.Context, id uuid.UUID) (Character, error)
+	GetCharactersByUserID(ctx context.Context, userID uuid.UUID) ([]GetCharactersByUserIDRow, error)
 	GetUserByID(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByUsername(ctx context.Context, username string) (User, error)
+	UpdateCharacter(ctx context.Context, arg UpdateCharacterParams) (Character, error)
 	UsernameExists(ctx context.Context, username string) (bool, error)
 }
 

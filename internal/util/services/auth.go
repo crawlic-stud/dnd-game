@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -55,15 +55,15 @@ func (s *AuthService) GenerateToken(userID string) (string, error) {
 	return token.SignedString(s.secret)
 }
 
-func (s *AuthService) GetUserID(r *http.Request) (pgtype.UUID, error) {
-	userUUID := pgtype.UUID{}
+func (s *AuthService) GetUserID(r *http.Request) (uuid.UUID, error) {
 	claims, _ := r.Context().Value(s.AuthContextKey).(jwt.MapClaims)
 	userID, ok := claims["user_id"].(string)
 	if !ok {
-		return userUUID, fmt.Errorf("cant read user_id")
+		return uuid.UUID{}, fmt.Errorf("cant read user_id")
 	}
-	if err := userUUID.Scan(userID); err != nil {
-		return userUUID, fmt.Errorf("cant scan user_id")
+	userUUID, err := uuid.Parse(userID)
+	if err != nil {
+		return uuid.UUID{}, fmt.Errorf("cant parse user_id")
 	}
 	return userUUID, nil
 }

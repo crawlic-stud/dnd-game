@@ -15,6 +15,11 @@ func (helper *ServerHelper) OK(w http.ResponseWriter, model any) {
 	helper.HTTPResponse(w, model, http.StatusOK)
 }
 
+// NoContent writes 204 response with json data
+func (helper *ServerHelper) NoContent(w http.ResponseWriter) {
+	helper.HTTPResponse(w, nil, http.StatusNoContent)
+}
+
 // BadRequest writes 400 response with detail
 func (helper *ServerHelper) BadRequest(w http.ResponseWriter, detail string) {
 	helper.HTTPResponse(w, Error{Detail: detail}, http.StatusBadRequest)
@@ -53,6 +58,11 @@ func (helper *ServerHelper) InternalServerError(w http.ResponseWriter, err error
 
 // HTTPResponse writes response with model and status code
 func (helper *ServerHelper) HTTPResponse(w http.ResponseWriter, model any, statusCode int) {
+	if model == nil {
+		w.WriteHeader(statusCode)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 
 	response, err := json.Marshal(model)
