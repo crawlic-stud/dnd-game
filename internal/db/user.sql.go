@@ -47,6 +47,17 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User,
 	return i, err
 }
 
+const userIDExists = `-- name: UserIDExists :one
+SELECT EXISTS(SELECT 1 FROM users WHERE id = $1)
+`
+
+func (q *Queries) UserIDExists(ctx context.Context, id uuid.UUID) (bool, error) {
+	row := q.db.QueryRow(ctx, userIDExists, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const usernameExists = `-- name: UsernameExists :one
 SELECT EXISTS(SELECT 1 FROM users WHERE username = $1)
 `

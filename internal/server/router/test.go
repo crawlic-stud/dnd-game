@@ -115,14 +115,17 @@ func Setup(t *testing.T) (*setup, *httptest.ResponseRecorder) {
 
 	poolTest := createTestDatabase(t)
 	log.Printf("Test is using test database: %s", poolTest.Config().ConnConfig.Database)
+
+	store := &db.Store{Queries: db.New(poolTest), Pool: poolTest}
 	server := &server.Server{
-		Store: &server.Store{Queries: db.New(poolTest), Pool: poolTest},
+		Store: store,
 		ServerHelper: &helper.ServerHelper{
 			MainLogger: helper.NewLogger("server"),
 		},
 		Auth: services.NewAuthService(
 			os.Getenv("APP_SECRET"),
 			86_400_000, // 1000 days
+			store,
 		),
 	}
 

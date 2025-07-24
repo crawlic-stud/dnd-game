@@ -30,6 +30,7 @@ type Querier interface {
 	GetUserByID(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByUsername(ctx context.Context, username string) (User, error)
 	UpdateCharacter(ctx context.Context, arg UpdateCharacterParams) (Character, error)
+	UserIDExists(ctx context.Context, id uuid.UUID) (bool, error)
 	UsernameExists(ctx context.Context, username string) (bool, error)
 }
 

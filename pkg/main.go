@@ -63,11 +63,13 @@ func setup() (*http.Server, func()) {
 		MainLogger: helper.NewLogger("server"),
 	}
 
+	store := &db.Store{Queries: db.New(pool), Pool: pool}
 	s := &server.Server{
-		Store: &server.Store{Queries: db.New(pool), Pool: pool},
+		Store: store,
 		Auth: services.NewAuthService(
 			os.Getenv("APP_SECRET"),
 			86_400_000, // 1000 days
+			store,
 		),
 		ServerHelper: serverHelper,
 	}

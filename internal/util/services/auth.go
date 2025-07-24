@@ -1,6 +1,9 @@
 package services
 
 import (
+	"context"
+	"dnd-game/internal/db"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -13,13 +16,15 @@ import (
 type authKey string
 
 type AuthService struct {
+	Store          *db.Store
 	AuthContextKey authKey
 	secret         []byte
 	tokenExpires   int
 }
 
-func NewAuthService(secret string, tokenExpires int) *AuthService {
+func NewAuthService(secret string, tokenExpires int, store *db.Store) *AuthService {
 	return &AuthService{
+		Store:          store,
 		AuthContextKey: authKey("authKey"),
 		secret:         []byte(secret),
 		tokenExpires:   tokenExpires,
@@ -30,7 +35,7 @@ func NewAuthService(secret string, tokenExpires int) *AuthService {
 func (s *AuthService) VerifyToken(tokenString string) (jwt.MapClaims, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("invalid signing method")
+			return nil, errors.New("invalid signing method")
 		}
 		return s.secret, nil
 	})
@@ -39,11 +44,23 @@ func (s *AuthService) VerifyToken(tokenString string) (jwt.MapClaims, error) {
 		return nil, err
 	}
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		return claims, nil
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return nil, errors.New("invalid token")
 	}
 
-	return nil, fmt.Errorf("invalid token")
+	user_id := claims["user_id"].(string)
+	userUUID, err := uuid.Parse(user_id)
+	if err != nil {
+		return nil, errors.New("invalid user_id")
+	}
+
+	exists, err := s.Store.UserIDExists(context.Background(), userUUID)
+	if !exists || err != nil {
+		return nil, fmt.Errorf("can't get user with uuid %v", userUUID)
+	}
+
+	return claims, nil
 }
 
 func (s *AuthService) GenerateToken(userID string) (string, error) {
