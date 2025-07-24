@@ -2,7 +2,6 @@ package validation
 
 import (
 	"fmt"
-	"reflect"
 )
 
 type BaseModel interface {
@@ -15,10 +14,7 @@ type validator struct {
 }
 
 func NewValidator(model any) validator {
-	return validator{
-		checks:       make([]bool, 0, reflect.ValueOf(model).NumField()),
-		descriptions: make([]string, 0, reflect.ValueOf(model).NumField()),
-	}
+	return validator{}
 }
 
 func (v validator) Add(check bool, desc string) validator {

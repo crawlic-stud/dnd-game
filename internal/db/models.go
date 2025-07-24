@@ -21,6 +21,49 @@ type Character struct {
 	Metadata  []byte           `json:"metadata"`
 }
 
+type Game struct {
+	ID         uuid.UUID        `json:"id"`
+	CreatedAt  pgtype.Timestamp `json:"created_at"`
+	UpdatedAt  pgtype.Timestamp `json:"updated_at"`
+	Name       string           `json:"name"`
+	MaxPlayers int16            `json:"max_players"`
+}
+
+type GameCharacter struct {
+	CharacterID uuid.UUID `json:"character_id"`
+	GameID      uuid.UUID `json:"game_id"`
+}
+
+type GameObject struct {
+	ID         uuid.UUID `json:"id"`
+	ObjectType int16     `json:"object_type"`
+	Texture    string    `json:"texture"`
+}
+
+type GamePlayer struct {
+	UserID uuid.UUID `json:"user_id"`
+	GameID uuid.UUID `json:"game_id"`
+	Role   string    `json:"role"`
+}
+
+type GameScene struct {
+	ID        uuid.UUID        `json:"id"`
+	GameID    uuid.UUID        `json:"game_id"`
+	CreatedAt pgtype.Timestamp `json:"created_at"`
+	UpdatedAt pgtype.Timestamp `json:"updated_at"`
+	Name      string           `json:"name"`
+	MapImage  string           `json:"map_image"`
+	Width     int16            `json:"width"`
+	Height    int16            `json:"height"`
+}
+
+type ScenesObject struct {
+	SceneID  uuid.UUID `json:"scene_id"`
+	ObjectID uuid.UUID `json:"object_id"`
+	PosX     int16     `json:"pos_x"`
+	PosY     int16     `json:"pos_y"`
+}
+
 type User struct {
 	ID             uuid.UUID `json:"id"`
 	Username       string    `json:"username"`

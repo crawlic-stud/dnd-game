@@ -116,7 +116,7 @@ func Setup(t *testing.T) (*setup, *httptest.ResponseRecorder) {
 	poolTest := createTestDatabase(t)
 	log.Printf("Test is using test database: %s", poolTest.Config().ConnConfig.Database)
 	server := &server.Server{
-		Store: db.New(poolTest),
+		Store: &server.Store{Queries: db.New(poolTest), Pool: poolTest},
 		ServerHelper: &helper.ServerHelper{
 			MainLogger: helper.NewLogger("server"),
 		},

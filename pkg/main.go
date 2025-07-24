@@ -52,6 +52,8 @@ func registerAPIRoutes(router *router.Router) {
 	router.Route("GET /characters/{character_id}", router.GetCharacterById)
 	router.Route("DELETE /characters/{character_id}", router.DeleteCharacter)
 	router.Route("PUT /characters/{character_id}", router.UpdateCharacter)
+
+	router.Route("POST /games", router.CreateGame)
 }
 
 func setup() (*http.Server, func()) {
@@ -62,7 +64,7 @@ func setup() (*http.Server, func()) {
 	}
 
 	s := &server.Server{
-		Store: db.New(pool),
+		Store: &server.Store{Queries: db.New(pool), Pool: pool},
 		Auth: services.NewAuthService(
 			os.Getenv("APP_SECRET"),
 			86_400_000, // 1000 days

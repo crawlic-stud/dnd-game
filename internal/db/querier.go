@@ -11,11 +11,22 @@ import (
 )
 
 type Querier interface {
+	AddCharacterToGame(ctx context.Context, arg AddCharacterToGameParams) error
+	AddObjectToScene(ctx context.Context, arg AddObjectToSceneParams) error
+	AddUserToGame(ctx context.Context, arg AddUserToGameParams) error
 	CreateCharacter(ctx context.Context, arg CreateCharacterParams) (Character, error)
+	CreateGame(ctx context.Context, arg CreateGameParams) (uuid.UUID, error)
+	CreateGameObject(ctx context.Context, arg CreateGameObjectParams) error
+	CreateGameScene(ctx context.Context, arg CreateGameSceneParams) (uuid.UUID, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) error
 	DeleteCharacter(ctx context.Context, id uuid.UUID) error
 	GetCharacterByID(ctx context.Context, id uuid.UUID) (Character, error)
 	GetCharactersByUserID(ctx context.Context, userID uuid.UUID) ([]GetCharactersByUserIDRow, error)
+	GetGame(ctx context.Context, id uuid.UUID) (Game, error)
+	GetGameCharacters(ctx context.Context, gameID uuid.UUID) ([]Character, error)
+	GetGameScenes(ctx context.Context, gameID uuid.UUID) ([]GameScene, error)
+	GetGameUsers(ctx context.Context, gameID uuid.UUID) ([]GetGameUsersRow, error)
+	GetSceneObjects(ctx context.Context, sceneID uuid.UUID) ([]ScenesObject, error)
 	GetUserByID(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByUsername(ctx context.Context, username string) (User, error)
 	UpdateCharacter(ctx context.Context, arg UpdateCharacterParams) (Character, error)

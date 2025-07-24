@@ -33,6 +33,8 @@ func NewAuthMiddleware(service *services.AuthService, helper *helper.ServerHelpe
 			} else {
 				claims, err := service.VerifyToken(jwtToken)
 
+				// TODO check user exists or not blocked
+
 				if err != nil {
 					helper.Unauthorized(w, "Token is invalid")
 					return
