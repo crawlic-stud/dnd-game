@@ -4,18 +4,16 @@ import (
 	"net/http"
 )
 
-func (api *Router) DeleteCharacter(w http.ResponseWriter, r *http.Request) {
+func (api *Router) DeleteCharacter(w http.ResponseWriter, r *http.Request) error {
 	characterUUID, err := api.UUIDFromPath(r, "character_id")
 	if err != nil {
-		api.BadRequest(w, err.Error())
-		return
+		return api.BadRequest(err.Error())
 	}
 
 	err = api.Store.DeleteCharacter(r.Context(), characterUUID)
 	if err != nil {
-		api.InternalServerError(w, err)
-		return
+		return err
 	}
 
-	api.NoContent(w)
+	return api.NoContent(w)
 }

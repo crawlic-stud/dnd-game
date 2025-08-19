@@ -2,7 +2,6 @@ package helper
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 )
 
@@ -11,66 +10,30 @@ type Error struct {
 }
 
 // OK writes 200 response with json data
-func (helper *ServerHelper) OK(w http.ResponseWriter, model any) {
-	helper.HTTPResponse(w, model, http.StatusOK)
+func (helper *ServerHelper) OK(w http.ResponseWriter, model any) error {
+	return helper.HTTPResponse(w, model, http.StatusOK)
 }
 
 // NoContent writes 204 response with json data
-func (helper *ServerHelper) NoContent(w http.ResponseWriter) {
-	helper.HTTPResponse(w, nil, http.StatusNoContent)
-}
-
-// BadRequest writes 400 response with detail
-func (helper *ServerHelper) BadRequest(w http.ResponseWriter, detail string) {
-	helper.HTTPResponse(w, Error{Detail: detail}, http.StatusBadRequest)
-}
-
-// Unauthorized writes 401 response with detail
-func (helper *ServerHelper) Unauthorized(w http.ResponseWriter, detail string) {
-	helper.HTTPResponse(w, Error{Detail: detail}, http.StatusUnauthorized)
-}
-
-// Forbidden writes 403 response with detail
-func (helper *ServerHelper) Forbidden(w http.ResponseWriter, detail string) {
-	helper.HTTPResponse(w, Error{Detail: detail}, http.StatusForbidden)
-}
-
-// NotFound writes 404 response with detail
-func (helper *ServerHelper) NotFound(w http.ResponseWriter, detail string) {
-	helper.HTTPResponse(w, Error{Detail: detail}, http.StatusNotFound)
-}
-
-// Conflict writes 409 response with detail
-func (helper *ServerHelper) Conflict(w http.ResponseWriter, detail string) {
-	helper.HTTPResponse(w, Error{Detail: detail}, http.StatusConflict)
-}
-
-// ValidationError writes 422 response with detail
-func (helper *ServerHelper) ValidationError(w http.ResponseWriter, err error) {
-	helper.HTTPResponse(w, Error{Detail: err.Error()}, http.StatusUnprocessableEntity)
-}
-
-// InternalServerError writes 500 response and logs an error
-func (helper *ServerHelper) InternalServerError(w http.ResponseWriter, err error) {
-	log.Printf("Internal server error: %v", err)
-	helper.HTTPResponse(w, Error{Detail: "Internal Server Error"}, http.StatusInternalServerError)
+func (helper *ServerHelper) NoContent(w http.ResponseWriter) error {
+	return helper.HTTPResponse(w, nil, http.StatusNoContent)
 }
 
 // HTTPResponse writes response with model and status code
-func (helper *ServerHelper) HTTPResponse(w http.ResponseWriter, model any, statusCode int) {
+func (helper *ServerHelper) HTTPResponse(w http.ResponseWriter, model any, statusCode int) error {
 	if model == nil {
 		w.WriteHeader(statusCode)
-		return
+		return nil
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 
 	response, err := json.Marshal(model)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-	} else {
-		w.WriteHeader(statusCode)
+		return err
 	}
 
+	w.WriteHeader(statusCode)
 	w.Write(response)
+	return nil
 }

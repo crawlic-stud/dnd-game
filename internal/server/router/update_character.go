@@ -8,22 +8,20 @@ import (
 	"net/http"
 )
 
-func (api *Router) UpdateCharacter(w http.ResponseWriter, r *http.Request) {
+func (api *Router) UpdateCharacter(w http.ResponseWriter, r *http.Request) error {
 	characterUUID, err := api.UUIDFromPath(r, "character_id")
 	if err != nil {
-		api.BadRequest(w, err.Error())
-		return
+		return api.BadRequest(err.Error())
 	}
 
 	var updateCharacter models.CharacterCreate
-	if ok := api.GetBody(w, r, &updateCharacter); !ok {
-		return
+	if err := api.GetBody(w, r, &updateCharacter); err != nil {
+		return err
 	}
 
 	metadata, err := json.Marshal(updateCharacter.Metadata)
 	if err != nil {
-		api.InternalServerError(w, err)
-		return
+		return err
 	}
 
 	updatedCharacter, err := api.Store.UpdateCharacter(r.Context(), db.UpdateCharacterParams{
@@ -35,15 +33,13 @@ func (api *Router) UpdateCharacter(w http.ResponseWriter, r *http.Request) {
 		Metadata: metadata,
 	})
 	if err != nil {
-		api.InternalServerError(w, err)
-		return
+		return err
 	}
 
 	response, err := mapper.CharacterResponse(updatedCharacter)
 	if err != nil {
-		api.InternalServerError(w, err)
-		return
+		return err
 	}
 
-	api.OK(w, response)
+	return api.OK(w, response)
 }

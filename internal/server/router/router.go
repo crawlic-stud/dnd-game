@@ -30,19 +30,23 @@ func NewRouter(server *server.Server, prefix string, logger *log.Logger) *Router
 	}
 }
 
-func (router *Router) Route(pattern string, handler func(w http.ResponseWriter, r *http.Request)) {
-	router.HandleFunc(router.addPrefixToPattern(pattern), handler)
+func (router *Router) Route(pattern string, handler func(w http.ResponseWriter, r *http.Request) error) {
+	router.HandleFunc(router.addPrefixToPattern(pattern), func(w http.ResponseWriter, r *http.Request) {
+		err := handler(w, r)
+		router.HandleHTTPError(err, w)
+	})
 }
 
-func (router *Router) Websocket(pattern string, handler func(conn *websocket.Conn, w http.ResponseWriter, r *http.Request)) {
+func (router *Router) Websocket(pattern string, handler func(conn *websocket.Conn, w http.ResponseWriter, r *http.Request) error) {
 	router.HandleFunc(pattern, func(w http.ResponseWriter, r *http.Request) {
 		conn, err := router.upgrader.Upgrade(w, r, nil)
 		if err != nil {
 			router.logger.Println("Failed to upgrade connection")
-			router.InternalServerError(w, err)
+			router.HandleHTTPError(err, w)
 			return
 		}
-		handler(conn, w, r)
+		err = handler(conn, w, r)
+		router.HandleHTTPError(err, w)
 		defer conn.Close()
 	})
 }

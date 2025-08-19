@@ -3,40 +3,35 @@ package router
 import (
 	"dnd-game/internal/db"
 	"dnd-game/internal/models"
-	"fmt"
 	"net/http"
 )
 
-func (api *Router) Register(w http.ResponseWriter, r *http.Request) {
+func (api *Router) Register(w http.ResponseWriter, r *http.Request) error {
 	var user models.LoginUser
-	if ok := api.GetBody(w, r, &user); !ok {
-		return
+	if err := api.GetBody(w, r, &user); err != nil {
+		return err
 	}
 
 	exists, err := api.Store.UsernameExists(r.Context(), user.Username)
 	if err != nil {
-		api.InternalServerError(w, err)
-		return
+		return err
 	}
 
 	if exists {
-		api.Conflict(w, fmt.Sprintf("Username '%s' already exists", user.Username))
-		return
+		return api.Conflict("Username '%s' already exists", user.Username)
 	}
 
 	hashedPassword, err := api.Auth.HashPassword(user.Password)
 	if err != nil {
-		api.InternalServerError(w, err)
-		return
+		return err
 	}
 
 	if err = api.Store.CreateUser(r.Context(), db.CreateUserParams{
 		Username:       user.Username,
 		HashedPassword: hashedPassword,
 	}); err != nil {
-		api.InternalServerError(w, err)
-		return
+		return err
 	}
 
-	api.OK(w, user)
+	return api.OK(w, user)
 }

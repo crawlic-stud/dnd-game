@@ -19,33 +19,35 @@ func getTokenFromHeader(r *http.Request) string {
 
 func NewAuthMiddleware(service *services.AuthService, helper *helper.ServerHelper, skipper func(r *http.Request) bool) Middleware {
 	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		handler := func(w http.ResponseWriter, r *http.Request) error {
 			if skipper(r) { // skips auth based on some condition
 				next.ServeHTTP(w, r)
-				return
+				return nil
 			}
 
 			jwtToken := getTokenFromHeader(r)
 			if jwtToken == "" {
-				helper.Unauthorized(w, "Malformed token")
-				return
+				return helper.Unauthorized("Malformed token")
 
 			} else {
 				claims, err := service.VerifyToken(jwtToken)
-
 				if err != nil {
-					helper.Unauthorized(w, err.Error())
-					return
+					return helper.Unauthorized(err.Error())
 
 				} else if !claims.VerifyExpiresAt(time.Now().Unix(), true) {
-					helper.Unauthorized(w, "Token is expired")
-					return
+					return helper.Unauthorized("Token is expired")
 
 				} else {
 					ctx := context.WithValue(r.Context(), service.AuthContextKey, claims)
 					next.ServeHTTP(w, r.WithContext(ctx))
 				}
 			}
+			return nil
+		}
+
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			err := handler(w, r)
+			helper.HandleHTTPError(err, w)
 		})
 	}
 }

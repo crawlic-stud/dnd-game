@@ -9,10 +9,10 @@ import (
 	"github.com/google/uuid"
 )
 
-func (api *Router) CreateGame(w http.ResponseWriter, r *http.Request) {
+func (api *Router) CreateGame(w http.ResponseWriter, r *http.Request) error {
 	var gameCreate models.GameCreate
-	if ok := api.GetBody(w, r, &gameCreate); !ok {
-		return
+	if err := api.GetBody(w, r, &gameCreate); err != nil {
+		return err
 	}
 
 	var (
@@ -69,11 +69,10 @@ func (api *Router) CreateGame(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		api.InternalServerError(w, err)
-		return
+		return err
 	}
 
-	api.OK(w, map[string]any{
+	return api.OK(w, map[string]any{
 		"gameID": gameID,
 	})
 }

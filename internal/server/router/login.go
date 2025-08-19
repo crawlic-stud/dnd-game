@@ -2,34 +2,30 @@ package router
 
 import (
 	"dnd-game/internal/models"
-	"fmt"
 	"net/http"
 )
 
-func (api *Router) Login(w http.ResponseWriter, r *http.Request) {
+func (api *Router) Login(w http.ResponseWriter, r *http.Request) error {
 	var user models.LoginUser
-	if ok := api.GetBody(w, r, &user); !ok {
-		return
+	if err := api.GetBody(w, r, &user); err != nil {
+		return err
 	}
 
 	userDb, err := api.Store.GetUserByUsername(r.Context(), user.Username)
 	if err != nil {
-		api.NotFound(w, fmt.Sprintf("User '%s' not found", user.Username))
-		return
+		return api.NotFound("User '%s' not found", user.Username)
 	}
 
 	if !api.Auth.CheckPasswordHash(user.Password, userDb.HashedPassword) {
-		api.Unauthorized(w, "Password is incorrect")
-		return
+		return api.Unauthorized("Password is incorrect")
 	}
 
 	token, err := api.Auth.GenerateToken(userDb.ID.String())
 	if err != nil {
-		api.InternalServerError(w, err)
-		return
+		return err
 	}
 
-	api.OK(w, map[string]any{
+	return api.OK(w, map[string]any{
 		"token": token,
 	})
 }

@@ -8,22 +8,20 @@ import (
 	"net/http"
 )
 
-func (api *Router) CreateCharacter(w http.ResponseWriter, r *http.Request) {
+func (api *Router) CreateCharacter(w http.ResponseWriter, r *http.Request) error {
 	var characterCreate models.CharacterCreate
-	if ok := api.GetBody(w, r, &characterCreate); !ok {
-		return
+	if err := api.GetBody(w, r, &characterCreate); err != nil {
+		return err
 	}
 
 	characterMetadata, err := json.Marshal(characterCreate.Metadata)
 	if err != nil {
-		api.InternalServerError(w, err)
-		return
+		return err
 	}
 
 	userID, err := api.Auth.GetUserID(r)
 	if err != nil {
-		api.InternalServerError(w, err)
-		return
+		return err
 	}
 
 	character, err := api.Store.CreateCharacter(r.Context(), db.CreateCharacterParams{
@@ -36,15 +34,13 @@ func (api *Router) CreateCharacter(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		api.InternalServerError(w, err)
-		return
+		return err
 	}
 
 	response, err := mapper.CharacterResponse(character)
 	if err != nil {
-		api.InternalServerError(w, err)
-		return
+		return err
 	}
 
-	api.OK(w, response)
+	return api.OK(w, response)
 }

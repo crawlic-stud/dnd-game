@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (api *Router) ListCharacters(w http.ResponseWriter, r *http.Request) {
+func (api *Router) ListCharacters(w http.ResponseWriter, r *http.Request) error {
 	userID := r.URL.Query().Get("user_id")
 
 	var userUUID uuid.UUID
@@ -15,22 +15,19 @@ func (api *Router) ListCharacters(w http.ResponseWriter, r *http.Request) {
 	if userID != "" {
 		userUUID, err = uuid.Parse(userID)
 		if err != nil {
-			api.ValidationError(w, err)
-			return
+			return api.UnprocessableEntity(err.Error())
 		}
 	} else {
 		userUUID, err = api.Auth.GetUserID(r)
 		if err != nil {
-			api.InternalServerError(w, err)
-			return
+			return err
 		}
 	}
 
 	characters, err := api.Store.GetCharactersByUserID(r.Context(), userUUID)
 	if err != nil {
-		api.InternalServerError(w, err)
-		return
+		return err
 	}
 
-	api.OK(w, characters)
+	return api.OK(w, characters)
 }

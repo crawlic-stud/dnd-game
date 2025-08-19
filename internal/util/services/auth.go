@@ -41,7 +41,7 @@ func (s *AuthService) VerifyToken(tokenString string) (jwt.MapClaims, error) {
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error while parsing token: %v", err)
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
